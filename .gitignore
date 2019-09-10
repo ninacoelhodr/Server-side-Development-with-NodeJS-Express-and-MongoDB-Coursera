@@ -65,3 +65,6 @@ typings/
 
 #Node
 node_modules
+
+#Mongo
+mongoDb
