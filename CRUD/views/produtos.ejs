@@ -11,16 +11,16 @@
         <thead>
             <tr>
                 <td>Nome</td>
-                <td>Sobrenome</td>
+                <td>Descricao</td>
             </tr>
         </thead>
         <tbody>
         <% data.forEach(function(details) { %>
             <tr>
                 <td><%= details.nome %></td>
-                <td><%= details.sobrenome %></td>
-                <td><a href="/edit/<%= details._id %>">Editar</a> - <a href="/delete/<%= details._id%>">Deletar</a></td>
-                <td><a href="/produtos/<%= details._id %>">Produtos</a></td>
+                <td><%= details.descricao %></td>
+                <td><%= details.usuario_id %></td>
+                <td><a href="/cadastroProdutos/<%= details.usuario_id %>">Cadastrar Produto</a></td>
             </tr>
             <% }) %>
         </tbody>

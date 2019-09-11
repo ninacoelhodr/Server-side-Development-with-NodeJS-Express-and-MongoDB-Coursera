@@ -6,7 +6,7 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://ninacdr:IPRLe4Ted7DafAiV@cluster0-ak0lr.mongodb.net/test?retryWrites=true&w=majority";
 MongoClient.connect(uri, (err, client) => {
     if (err) return console.log(err);
-    db = client.db('node') // coloque o nome do seu DB
+    db = client.db('TrabalhoDSO') // coloque o nome do seu DB
 
     app.listen(3000, () => {
         console.log('Server running on port 3000')
@@ -22,11 +22,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    var cursor = db.collection('data').find()
+    var cursor = db.collection('Usuario').find()
 })
 
 app.get('/show', (req, res) => {
-    db.collection('data').find().toArray((err, results) => {
+    db.collection('Usuario').find().toArray((err, results) => {
         if (err) return console.log(err)
         res.render('show.ejs', { data: results })
 
@@ -34,7 +34,7 @@ app.get('/show', (req, res) => {
 })
 
 app.post('/show', (req, res) => {
-    db.collection('data').save(req.body, (err, result) => {
+    db.collection('Usuario').save(req.body, (err, result) => {
         if (err) return console.log(err)
 
         console.log('Salvo no Banco de Dados')
@@ -47,7 +47,7 @@ app.route('/edit/:id')
     var id = req.params.id
     var ObjectId = require('mongodb').ObjectID;
 
-    db.collection('data').find(ObjectId(id)).toArray((err, result) => {
+    db.collection('Usuario').find(ObjectId(id)).toArray((err, result) => {
         if (err) return res.send(err)
         res.render('edit.ejs', { data: result})
     })
@@ -59,7 +59,7 @@ app.route('/edit/:id')
     var surname = req.body.surname
     var ObjectId = require('mongodb').ObjectID;
 
-    db.collection('data').updateOne({_id: ObjectId(id)}, {
+    db.collection('Usuario').updateOne({_id: ObjectId(id)}, {
         $set: {
             name: name,
             surname: surname
@@ -76,9 +76,46 @@ app.route('/delete/:id')
     var id = req.params.id
     var ObjectId = require('mongodb').ObjectID;
 
-    db.collection('data').deleteOne({_id: ObjectId(id)}, (err, result) => {
+    db.collection('Usuario').deleteOne({_id: ObjectId(id)}, (err, result) => {
         if (err) return res.send(500, err)
         console.log('Deletando')
         res.redirect('/show')
     })
 })
+
+app.route('/produtos/:id')
+.get((req, res) => {
+    var id = req.params.id
+    var ObjectId = require('mongodb').ObjectID;
+
+    db.collection('Produtos').find({usuario_id: ObjectId(id)}).toArray((err, result) => {
+        if (err) return res.send(err)
+        res.render('produtos.ejs', { data: result})
+    })
+})
+
+app.route('/cadastroProdutos/:id')
+.get((req, res) => {
+    var id = req.params.id
+    var ObjectId = require('mongodb').ObjectID;
+
+    db.collection('Usuario').find(ObjectId(id)).toArray((err, result) => {
+        if (err) return res.send(err)
+        res.render('cadastroProdutos.ejs', { data: result})
+    })
+})
+
+.post((req, res) => {
+    var id = req.params.id
+    var ObjectId = require('mongodb').ObjectID;
+    console.log(id);
+    db.collection('Produtos').save({usuario_id: ObjectId(id), nome: req.body.nome, descricao: req.body.descricao, preco: req.body.preco}, (err, result) => {
+        if (err) return console.log(err)
+
+        console.log('Salvo no Banco de Dados')
+        res.redirect('/show')
+    })
+})
+
+
+
